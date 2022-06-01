@@ -53,11 +53,19 @@ static const Layout layouts[] = {
 
 /* key definitions */
 #define MODKEY Mod1Mask
-#define TAGKEYS(KEY,TAG) \
-	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
+#define TAGKEYS(CHAIN,KEY,TAG) \
+	{ MODKEY,                       CHAIN,    KEY,      view,           {.ui = 1 << TAG} }, \
+	{ MODKEY|ControlMask,           CHAIN,    KEY,      toggleview,     {.ui = 1 << TAG} }, \
+	{ MODKEY|ShiftMask,             CHAIN,    KEY,      tag,            {.ui = 1 << TAG} }, \
+	{ MODKEY|ControlMask|ShiftMask, CHAIN,    KEY,      toggletag,      {.ui = 1 << TAG} },
+#define STACKKEYS(MOD, CHAIN, ACTION) \
+	{ MOD, CHAIN, XK_j,     ACTION##stack, {.i = INC(+1) } }, \
+	{ MOD, CHAIN, XK_k,     ACTION##stack, {.i = INC(-1) } }, \
+	{ MOD, CHAIN, XK_grave, ACTION##stack, {.i = PREVSEL } }, \
+	{ MOD, CHAIN, XK_c,     ACTION##stack, {.i = 0 } }, \
+	{ MOD, CHAIN, XK_a,     ACTION##stack, {.i = 1 } }, \
+	{ MOD, CHAIN, XK_z,     ACTION##stack, {.i = 2 } }, \
+	{ MOD, CHAIN, XK_x,     ACTION##stack, {.i = -1 } },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
