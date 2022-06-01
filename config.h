@@ -61,6 +61,7 @@ enum layout_types {
 	LAYOUT_TILE,
 	LAYOUT_FLOAT,
 	LAYOUT_MONOCLE,
+	LAYOUT_GRID,
 };
 
 static const Layout layouts[] = {
@@ -69,6 +70,7 @@ static const Layout layouts[] = {
 	{ "|-",      tile },
 	{ "[]",      NULL },    /* no layout function means floating behavior */
 	{ "mo",      monocle },
+	{ "##",      grid },
 };
 
 /* key definitions */
@@ -117,6 +119,7 @@ static Key keys[] = {
 	{ MODKEY,           XK_t, XK_t,                     setlayout,      {.v = &layouts[LAYOUT_TILE]} },
 	{ MODKEY,           XK_t, XK_f,                     setlayout,      {.v = &layouts[LAYOUT_FLOAT]} },
 	{ MODKEY,           XK_t, XK_m,                     setlayout,      {.v = &layouts[LAYOUT_MONOCLE]} },
+	{ MODKEY,           XK_t, XK_g,                     setlayout,      {.v = &layouts[LAYOUT_GRID]} },
 	{ MODKEY,           XK_t, XK_c,                     setlayout,      {.v = &layouts[LAYOUT_COLUMN]} },
 
 	/* shortcuts */
