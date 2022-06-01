@@ -43,11 +43,11 @@ static const Rule rules[] = {
 /* xprop(1):
  *        WM_CLASS(STRING) = instance, class
  *        WM_NAME(STRING) = title
-	   class          instance  title            tags mask       isfloating  monitor */
-	{ "KeePassXC",    NULL,     NULL,            (1 << 31),      1,          -1 },
-	{ "qutebrowser",  NULL,     "YouTube",       1 << ('y'-'a'), 0,          -1 },
-	{ "st-256color",  NULL,     NULL,            0,              0,          -1 },
-	{ NULL,           NULL,     "Event Tester",  0,              0,          -1 },
+	   class          instance  title            tags mask       isfloating  isterminal  noswallow  monitor */
+	{ "KeePassXC",    NULL,     NULL,            (1 << 31),      1,          0,          0,         -1 },
+	{ "qutebrowser",  NULL,     "YouTube",       1 << ('y'-'a'), 0,          0,          0,         -1 },
+	{ "st-256color",  NULL,     NULL,            0,              0,          1,          0,         -1 },
+	{ NULL,           NULL,     "Event Tester",  0,              0,          0,          1,         -1 },
 };
 
 /* layout(s) */
