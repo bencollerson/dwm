@@ -89,6 +89,13 @@ typedef struct {
 } Button;
 
 typedef struct Clientlist Clientlist;
+
+typedef struct {
+	const char* class;
+	const char* title;
+	const void* v;
+} scratchpad;
+
 typedef struct Monitor Monitor;
 typedef struct Client Client;
 struct Client {
@@ -233,6 +240,7 @@ static void togglefloating(const Arg *arg);
 static void togglefullscr(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
+static void togglescratch(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
 static void unmanage(Client *c, int destroyed);
 static void unmapnotify(XEvent *e);
@@ -332,9 +340,15 @@ applyrules(Client *c)
 			c->isfloating = r->isfloating;
 			c->tags |= r->tags;
 			for (m = mons; m && (m->tagset[m->seltags] & c->tags) == 0; m = m->next);
-			if (m)
+			if (m) {
 				c->mon = m;
+				if(c->isfloating){
+					c->x = c->mon->mx + (c->mon->mw - WIDTH(c)) / 2;
+					c->y = c->mon->my + (c->mon->mh - HEIGHT(c)) / 2;
+				}
+			}
 		}
+
 	}
 	if (ch.res_class)
 		XFree(ch.res_class);
@@ -1219,6 +1233,8 @@ manage(Window w, XWindowAttributes *wa)
 	updatewindowtype(c);
 	updatesizehints(c);
 	updatewmhints(c);
+	c->x = c->mon->mx + (c->mon->mw - WIDTH(c)) / 2;
+	c->y = c->mon->my + (c->mon->mh - HEIGHT(c)) / 2;
 	XSelectInput(dpy, w, EnterWindowMask|FocusChangeMask|PropertyChangeMask|StructureNotifyMask);
 	grabbuttons(c, 0);
 	if (!c->isfloating)
@@ -2044,6 +2060,50 @@ toggleview(const Arg *arg)
 			arrange(selmon);
 			focus(NULL);
 		}
+	}
+}
+
+void
+togglescratch(const Arg *arg)
+{
+	Client *c;
+	char found = 0;
+	Monitor *m;
+	m = mons;
+	for (c = m->cl->clients; c; c = c->next){
+		const char *class;
+		XClassHint ch = { NULL, NULL };
+		XGetClassHint(dpy, c->win, &ch);
+		class = ch.res_class ? ch.res_class : broken;
+		found = (((char *)((scratchpad *)arg->v)->class != NULL) &&
+				strcmp(class,(char *)((scratchpad *)arg->v)->class) == 0) ||
+			(((char *)((scratchpad *)arg->v)->title != NULL) &&
+			 strcmp(c->name, (char *)((scratchpad *)arg->v)->title) == 0);
+		if(found){
+			m = c->mon;
+			break;
+		}
+	}
+	if (found) {
+		if(m != selmon){
+			sendmon(c, selmon);
+			c->tags = selmon->tagset[selmon->seltags];
+			applyrules(c);
+		}else{
+			c->tags = ISVISIBLE(c, selmon) ? 1 << 31 : selmon->tagset[selmon->seltags];
+		}
+		focus(NULL);
+		arrange(selmon);
+		attachclients(selmon);
+		arrange(selmon);
+		focus(NULL);
+		if (ISVISIBLE(c, selmon)) {
+			restack(selmon);
+			focus(c);
+			XRaiseWindow(dpy, c->win);
+		}
+	} else{
+		spawn(&((Arg){.v = ((scratchpad *)arg->v)->v}));
 	}
 }
 
