@@ -82,6 +82,12 @@ typedef struct {
 	const Arg arg;
 } Button;
 
+typedef struct {
+	const char* class;
+	const char* title;
+	const void* v;
+} scratchpad;
+
 typedef struct Monitor Monitor;
 typedef struct Client Client;
 struct Client {
@@ -140,6 +146,7 @@ typedef struct {
 	const char *title;
 	unsigned int tags;
 	int isfloating;
+	float floatx, floaty, floatw, floath;
 	int monitor;
 } Rule;
 
@@ -218,6 +225,7 @@ static void togglefloating(const Arg *arg);
 static void togglefullscr(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
+static void togglescratch(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
 static void unmanage(Client *c, int destroyed);
 static void unmapnotify(XEvent *e);
@@ -308,15 +316,21 @@ applyrules(Client *c)
 	for (i = 0; i < LENGTH(rules); i++) {
 		r = &rules[i];
 		if ((!r->title || strstr(c->name, r->title))
-		&& (!r->class || strstr(class, r->class))
-		&& (!r->instance || strstr(instance, r->instance)))
-		{
-			c->isfloating = r->isfloating;
-			c->tags |= r->tags;
-			for (m = mons; m && m->num != r->monitor; m = m->next);
-			if (m)
-				c->mon = m;
-		}
+			&& (!r->class || strstr(class, r->class))
+			&& (!r->instance || strstr(instance, r->instance)))
+			{
+				c->isfloating = r->isfloating;
+				c->tags |= r->tags;
+				for (m = mons; m && m->num != r->monitor; m = m->next);
+				if (m)
+					c->mon = m;
+				if(c->isfloating){
+					if (r->floatx >= 0) c->x = c->mon->mx + (int)((float)c->mon->mw * r->floatx);
+					if (r->floaty >= 0) c->y = c->mon->my + (int)((float)c->mon->mh * r->floaty);
+					if (r->floatw >= 0) c->w = (int)((float)c->mon->mw * r->floatw);
+					if (r->floath >= 0) c->h = (int)((float)c->mon->mh * r->floath);
+				}
+			}
 	}
 	if (ch.res_class)
 		XFree(ch.res_class);
@@ -1837,6 +1851,49 @@ toggleview(const Arg *arg)
 
 		focus(NULL);
 		arrange(selmon);
+	}
+}
+
+void
+togglescratch(const Arg *arg)
+{
+	Client *c;
+	char found = 0;
+	Monitor *m;
+	for(m = mons; m; m = m->next){
+		for (c = m->clients; c; c = c->next){
+			const char *class;
+			XClassHint ch = { NULL, NULL };
+			XGetClassHint(dpy, c->win, &ch);
+			class = ch.res_class ? ch.res_class : broken;
+			found = (((char *)((scratchpad *)arg->v)->class != NULL) &&
+					strcmp(class,(char *)((scratchpad *)arg->v)->class) == 0) ||
+				(((char *)((scratchpad *)arg->v)->title != NULL) &&
+				 strcmp(c->name, (char *)((scratchpad *)arg->v)->title) == 0);
+			if(found){
+				break;
+			}
+		}
+		if(found){
+			break;
+		}
+	}
+	if (found) {
+		if(m != selmon){
+			sendmon(c, selmon);
+			c->tags = selmon->tagset[selmon->seltags];
+			applyrules(c);
+		}else{
+			c->tags = ISVISIBLE(c) ? 1 << 31 : selmon->tagset[selmon->seltags];
+		}
+		focus(NULL);
+		arrange(selmon);
+		if (ISVISIBLE(c)) {
+			restack(selmon);
+			focus(c);
+		}
+	} else{
+		spawn(&((Arg){.v = ((scratchpad *)arg->v)->v}));
 	}
 }
 
