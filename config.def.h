@@ -1,11 +1,16 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/XF86keysym.h>
+
+/* Constants */
+#define TERMINAL "/usr/local/bin/st"
+
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const int showbar            = 1;        /* 0 means no bar */
-static const int topbar             = 1;        /* 0 means bottom bar */
+static const int topbar             = 0;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=10" };
 static const char dmenufont[]       = "monospace:size=10";
 static const char col_gray1[]       = "#222222";
@@ -13,6 +18,7 @@ static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_cyan[]        = "#005577";
+static const char col_cyan2[]        = "#0077ff";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
@@ -23,16 +29,14 @@ static const char *colors[][3]      = {
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
-	/* xprop(1):
-	 *	WM_CLASS(STRING) = instance, class
-	 *	WM_NAME(STRING) = title
-	 */
-
-	/* class		instance title	tags mask	isfloating	isterminal	noswallow	monitor */
-
-	{"Gimp",		NULL,	NULL, 	0,		1,		0,		1,              -1},
-	{"Qalculate-gtk",	NULL,	NULL,	0,		1,		0,		1,              -1},
-	{ "St",                 NULL,   NULL,   0,              0,              1,              0,              -1 },
+/* xprop(1):
+ *        WM_CLASS(STRING) = instance, class
+ *        WM_NAME(STRING) = title
+           class          instance  title  tags mask  isfloating  isterminal  noswallow  monitor */
+        { "Gimp",         NULL,     NULL,  0,         1,          0,          1,         -1 },
+	{ "KeePassXC",    NULL,     NULL,  0,         1,          0,          1,         -1 },
+	{ "st-256color",  NULL,     NULL,  0,         0,          1,          0,         -1 },
+	{ "Notepadqq",    NULL,     NULL,  0,         0,          0,          0,         -1 },
 };
 
 
@@ -44,15 +48,15 @@ static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen win
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
-	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
-	{ "|||",      col },
-	{ "HHH",      grid },
+	{ "|t|",      tile },    /* first entry is default */
+	{ "|f|",      NULL },    /* no layout function means floating behavior */
+	{ "|m|",      monocle },
+	{ "|g|",      grid },
+	{ "|c|",      col },
 };
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask
 #define TAGKEYS(CHAIN,KEY,TAG) \
 	{ MODKEY,                       CHAIN,    KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           CHAIN,    KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -72,35 +76,12 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "st", NULL };
-static const scratchpad qalculate = {.class = "Qalculate-gtk", .v = (char *[]){"qalculate-gtk", NULL}};
+static const char *dmenucmd[] = { "dmenu_run", "-b", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *termcmd[]  = { TERMINAL, NULL };
+static const scratchpad keepassxc = {.class = "KeePassXC", .v = (char *[]){"keepassxc", NULL}};
 
 static Key keys[] = {
 	/* modifier                     chain key   key        function        argument */
-	{ MODKEY,                       -1,         XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             -1,         XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,                       -1,         XK_b,      togglebar,      {0} },
-	{ MODKEY,                       -1,         XK_j,      focusstack,     {.i = +1 } },
-	{ MODKEY,                       -1,         XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       -1,         XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       -1,         XK_d,      incnmaster,     {.i = -1 } },
-	{ MODKEY,                       -1,         XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       -1,         XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY,                       -1,         XK_Return, zoom,           {0} },
-	{ MODKEY,                       -1,         XK_Tab,    view,           {0} },
-	{ MODKEY|ShiftMask,             -1,         XK_c,      killclient,     {0} },
-	{ MODKEY,                       -1,         XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       -1,         XK_f,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       -1,         XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       -1,         XK_space,  setlayout,      {0} },
-	{ MODKEY|ShiftMask,             -1,         XK_space,  togglefloating, {0} },
-	{ MODKEY,                       -1,         XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             -1,         XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       -1,         XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       -1,         XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             -1,         XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             -1,         XK_period, tagmon,         {.i = +1 } },
 	TAGKEYS(                        -1,         XK_1,                      0)
 	TAGKEYS(                        -1,         XK_2,                      1)
 	TAGKEYS(                        -1,         XK_3,                      2)
@@ -110,9 +91,78 @@ static Key keys[] = {
 	TAGKEYS(                        -1,         XK_7,                      6)
 	TAGKEYS(                        -1,         XK_8,                      7)
 	TAGKEYS(                        -1,         XK_9,                      8)
+
+	STACKKEYS(MODKEY,               -1,           focus)
+	STACKKEYS(MODKEY|ShiftMask,     -1,           push)
+
+	{ MODKEY,                       XK_a,       XK_a,      view,           {.ui = 1 << 0} },
+	{ MODKEY,                       XK_a,       XK_s,      view,           {.ui = 1 << 1} },
+	{ MODKEY,                       XK_a,       XK_d,      view,           {.ui = 1 << 2} },
+	{ MODKEY,                       XK_a,       XK_f,      view,           {.ui = 1 << 3} },
+	{ MODKEY,                       XK_a,       XK_g,      view,           {.ui = 1 << 4} },
+	{ MODKEY,                       XK_a,       XK_h,      view,           {.ui = 1 << 5} },
+	{ MODKEY,                       XK_a,       XK_j,      view,           {.ui = 1 << 6} },
+	{ MODKEY,                       XK_a,       XK_k,      view,           {.ui = 1 << 7} },
+	{ MODKEY,                       XK_a,       XK_l,      view,           {.ui = 1 << 8} },
+
+	{ MODKEY,                       XK_s,       XK_a,      tag,            {.ui = 1 << 0} },
+	{ MODKEY,                       XK_s,       XK_s,      tag,            {.ui = 1 << 1} },
+	{ MODKEY,                       XK_s,       XK_d,      tag,            {.ui = 1 << 2} },
+	{ MODKEY,                       XK_s,       XK_f,      tag,            {.ui = 1 << 3} },
+	{ MODKEY,                       XK_s,       XK_g,      tag,            {.ui = 1 << 4} },
+	{ MODKEY,                       XK_s,       XK_h,      tag,            {.ui = 1 << 5} },
+	{ MODKEY,                       XK_s,       XK_j,      tag,            {.ui = 1 << 6} },
+	{ MODKEY,                       XK_s,       XK_k,      tag,            {.ui = 1 << 7} },
+	{ MODKEY,                       XK_s,       XK_l,      tag,            {.ui = 1 << 8} },
+
 	{ MODKEY|ShiftMask,             -1,         XK_q,      quit,           {0} },
-	{ MODKEY,                       XK_a,       XK_d,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,                       XK_a,       XK_t,      spawn,          {.v = termcmd } },
+	{ MODKEY,                       -1,         XK_o,      togglescratch,  {.v = &keepassxc } },
+	{ MODKEY,                       -1,         XK_d,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       -1,         XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,                       -1,         XK_b,      togglebar,      {0} },
+	{ MODKEY,                       -1,         XK_h,      setmfact,       {.f = -0.05} },
+	{ MODKEY,                       -1,         XK_l,      setmfact,       {.f = +0.05} },
+	{ MODKEY|ShiftMask,             -1,         XK_Return, zoom,           {0} },
+	{ MODKEY,                       -1,         XK_Tab,    view,           {0} },
+	{ MODKEY,                       -1,         XK_q,      killclient,     {0} },
+	{ MODKEY,                       XK_t,       XK_t,      setlayout,      {.v = &layouts[0]} }, /* tile */
+	{ MODKEY,                       XK_t,       XK_f,      setlayout,      {.v = &layouts[1]} }, /* floating */
+	{ MODKEY,                       XK_t,       XK_m,      setlayout,      {.v = &layouts[2]} }, /* monocle */
+	{ MODKEY,                       XK_t,       XK_g,      setlayout,      {.v = &layouts[3]} }, /* grid */
+	{ MODKEY,                       XK_t,       XK_c,      setlayout,      {.v = &layouts[4]} }, /* col */
+	{ MODKEY,                       -1,         XK_space,  setlayout,      {0} },
+	{ MODKEY|ShiftMask,             -1,         XK_space,  togglefloating, {0} },
+
+	{ MODKEY,                       -1,         XK_f,      togglefullscr,  {0} },
+	{ MODKEY,                       -1,         XK_m,      focusmon,       {.i = +1 } },
+	{ MODKEY,                       -1,         XK_n,      tagmon,         {.i = +1 } },
+
+	{ MODKEY,                       -1,   XK_w,            spawn,         SHCMD("$BROWSER") },
+	{ MODKEY|ShiftMask,             -1,   XK_w,            spawn,         SHCMD(TERMINAL " -e sudo nmtui") },
+	{ MODKEY,                       -1,   XK_p,            spawn,         SHCMD("media-command playpause") },
+	{ 0,                            -1,   XF86XK_AudioPlay,spawn,         SHCMD("media-command playpause") },
+	{ MODKEY,                       -1,   XK_bracketleft,  spawn,         SHCMD("media-command prev") },
+	{ 0,                            -1,   XF86XK_AudioPrev,spawn,         SHCMD("media-command prev") },
+	{ MODKEY,                       -1,   XK_bracketright, spawn,         SHCMD("media-command next") },
+	{ 0,                            -1,   XF86XK_AudioNext,spawn,         SHCMD("media-command next") },
+	{ MODKEY,                       -1,   XK_backslash,    view,          {0} },
+	{ MODKEY,                       -1,   XK_g,            spawn,         SHCMD("ss -s") },
+	{ MODKEY|ShiftMask,             -1,   XK_g,            spawn,         SHCMD("ss") },
+	{ MODKEY,                       -1,   XK_z,            spawn,         SHCMD("lock-screen") },
+	{ MODKEY|ShiftMask,             -1,   XK_z,            spawn,         SHCMD("suspend-lock") },
+	{ MODKEY,                       -1,   XK_x,            spawn,         SHCMD("keepmenu") },
+	{ MODKEY,                       -1,   XK_v,            spawn,         SHCMD("diodon-in-the-corner") },
+	{ MODKEY,                       -1,   XK_e,            spawn,         SHCMD("fix-stuff") },
+	{ Mod1Mask,                     -1,   XK_comma,        spawn,         SHCMD("change-volume down") },
+	{ MODKEY,                       -1,   XK_comma,        spawn,         SHCMD("change-volume down") },
+	{ 0,                            -1,   XF86XK_AudioLowerVolume, spawn, SHCMD("change-volume down") },
+	{ Mod1Mask,                     -1,   XK_period,       spawn,         SHCMD("change-volume up") },
+	{ MODKEY,                       -1,   XK_period,       spawn,         SHCMD("change-volume up") },
+	{ 0,                            -1,   XF86XK_AudioRaiseVolume, spawn, SHCMD("change-volume up") },
+	{ Mod1Mask,                     -1,   XK_slash,        spawn,         SHCMD("change-volume toggle") },
+	{ MODKEY,                       -1,   XK_slash,        spawn,         SHCMD("change-volume toggle") },
+	{ 0,                            -1,   XF86XK_AudioMute,spawn,         SHCMD("change-volume toggle") },
+
 };
 
 /* button definitions */
