@@ -15,14 +15,14 @@ static const char *fonts[]          = {
 	"mono:pixelsize=14"
 };
 
-static const char col_gray1[]       = "#222222";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_cyan[]        = "#005577";
-static const char col_cyan2[]       = "#0077ff";
-static const char *colors[][3]      = {
-	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray1 },
-	[SchemeSel]  = { col_gray3, col_gray1, col_cyan2  },
+static const char col_normbg[] = "#222222";
+static const char col_text[]   = "#bbbbbb";
+static const char col_selbg[]  = "#005577";
+static const char *colors[][3] = {
+	/*                 fg        bg          border   */
+	[SchemeNorm]   = { col_text, col_normbg, col_normbg },
+	[SchemeSel]    = { col_text, col_selbg,  col_selbg  },
+	[SchemeTitle]  = { col_text, col_normbg, col_normbg },
 };
 
 /* tagging */
