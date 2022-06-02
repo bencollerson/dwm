@@ -153,6 +153,7 @@ static void checkotherwm(void);
 static void cleanup(void);
 static void cleanupmon(Monitor *mon);
 static void clientmessage(XEvent *e);
+static void col(Monitor *);
 static void configure(Client *c);
 static void configurenotify(XEvent *e);
 static void configurerequest(XEvent *e);
@@ -1675,6 +1676,27 @@ tagmon(const Arg *arg)
 	if (!selmon->sel || !mons->next)
 		return;
 	sendmon(selmon->sel, dirtomon(arg->i));
+}
+
+void
+col(Monitor *m) {
+	Client *c;
+	unsigned int n, i;
+
+	/* Count windows */
+	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+
+	if(n == 0)
+		return;
+	else if(n == 1) { /* Just fill the whole screen */
+		c = nexttiled(m->clients);
+		resize(c, m->wx, m->wy, m->ww - (2*c->bw), m->wh - (2*c->bw), False);
+	}
+	else {
+		for(i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++) {
+			resize(c, m->wx + i * m->ww / n, m->wy, m->ww / n - (2*c->bw), m->wh - (2*c->bw), False);
+		}
+	}
 }
 
 void
