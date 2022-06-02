@@ -161,6 +161,7 @@ static void checkotherwm(void);
 static void cleanup(void);
 static void cleanupmon(Monitor *mon);
 static void clientmessage(XEvent *e);
+static void col(Monitor *);
 static void configure(Client *c);
 static void configurenotify(XEvent *e);
 static void configurerequest(XEvent *e);
@@ -1769,6 +1770,18 @@ tagmon(const Arg *arg)
 	if (!selmon->sel || !mons->next)
 		return;
 	sendmon(selmon->sel, dirtomon(arg->i));
+}
+
+void
+col(Monitor *m) {
+	Client *c;
+	unsigned int n, i;
+
+	for(n = 0, c = nexttiled(m->cl->clients, m); c; c = nexttiled(c->next, m), n++);
+
+	for(i = 0, c = nexttiled(m->cl->clients, m); c; c = nexttiled(c->next, m), i++) {
+		resize(c, m->wx + i * m->ww / n, m->wy, m->ww / n - (2*c->bw), m->wh - (2*c->bw), False);
+	}
 }
 
 void
