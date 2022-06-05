@@ -163,7 +163,6 @@ typedef struct {
 	int isfloating;
 	int isterminal;
 	int noswallow;
-	float floatx, floaty, floatw, floath;
 	int monitor;
 } Rule;
 
@@ -357,10 +356,8 @@ applyrules(Client *c)
 				if (m)
 					c->mon = m;
 				if(c->isfloating){
-					if (r->floatx >= 0) c->x = c->mon->mx + (int)((float)c->mon->mw * r->floatx);
-					if (r->floaty >= 0) c->y = c->mon->my + (int)((float)c->mon->mh * r->floaty);
-					if (r->floatw >= 0) c->w = (int)((float)c->mon->mw * r->floatw);
-					if (r->floath >= 0) c->h = (int)((float)c->mon->mh * r->floath);
+					c->x = c->mon->mx + (c->mon->mw - WIDTH(c)) / 2;
+					c->y = c->mon->my + (c->mon->mh - HEIGHT(c)) / 2;
 				}
 			}
 	}
@@ -1209,6 +1206,8 @@ manage(Window w, XWindowAttributes *wa)
 	updatewindowtype(c);
 	updatesizehints(c);
 	updatewmhints(c);
+	c->x = c->mon->mx + (c->mon->mw - WIDTH(c)) / 2;
+	c->y = c->mon->my + (c->mon->mh - HEIGHT(c)) / 2;
 	XSelectInput(dpy, w, EnterWindowMask|FocusChangeMask|PropertyChangeMask|StructureNotifyMask);
 	grabbuttons(c, 0);
 	if (!c->isfloating)
