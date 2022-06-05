@@ -116,6 +116,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_s,       XK_l,      tag,            {.ui = 1 << 8} },
 
 	{ MODKEY|ShiftMask,             -1,         XK_q,      quit,           {0} },
+	{ MODKEY,                       -1,         XK_minus,  togglescratch,  {.v = &keepassxc } },
 	{ MODKEY,                       -1,         XK_o,      togglescratch,  {.v = &keepassxc } },
 	{ MODKEY,                       -1,         XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY,                       -1,         XK_Return, spawn,          {.v = termcmd } },
