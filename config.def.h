@@ -32,9 +32,9 @@ static const Rule rules[] = {
 /* xprop(1):
  *        WM_CLASS(STRING) = instance, class
  *        WM_NAME(STRING) = title
-           class          instance  title  tags mask  isfloating  isterminal  noswallow  monitor */
-        { "Gimp",         NULL,     NULL,  0,         1,          0,          1,         -1 },
-	{ "KeePassXC",    NULL,     NULL,  0,         1,          0,          1,         -1 },
+	   class          instance  title  tags mask  isfloating  isterminal  noswallow  monitor */
+	{ "Gimp",         NULL,     NULL,  0,         1,          0,          0,         -1 },
+	{ "KeePassXC",    NULL,     NULL,  0,         1,          0,          0,         -1 },
 	{ "st-256color",  NULL,     NULL,  0,         0,          1,          0,         -1 },
 	{ "Notepadqq",    NULL,     NULL,  0,         0,          0,          0,         -1 },
 };

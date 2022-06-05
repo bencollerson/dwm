@@ -2073,6 +2073,7 @@ togglescratch(const Arg *arg)
 		if (ISVISIBLE(c)) {
 			restack(selmon);
 			focus(c);
+			XRaiseWindow(dpy, c->win);
 		}
 	} else{
 		spawn(&((Arg){.v = ((scratchpad *)arg->v)->v}));
