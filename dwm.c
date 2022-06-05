@@ -968,6 +968,8 @@ focusstack(const Arg *arg)
 	int i = stackpos(arg);
 	Client *c, *p;
 
+	if (!selmon->sel || (selmon->sel->isfullscreen && lockfullscreen))
+		return;
 	if(i < 0)
 		return;
 
