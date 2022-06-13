@@ -1,3 +1,22 @@
+dwm with some patches
+
+* columns and grid layouts
+* per-tag layouts
+* fullscreen
+* hide empty tags
+* scratchpad
+* swallow
+* warp pointer
+* stacker key bindings
+* chained key bindings
+* equal split master/slave windows
+* keep client focus when sending to other monitor
+* my keybindings, colours, and font tweaks
+
+upstream: https://git.suckless.org/dwm
+
+
+
 dwm - dynamic window manager
 ============================
 dwm is an extremely fast, small, and dynamic window manager for X.
