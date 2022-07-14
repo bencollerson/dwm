@@ -164,7 +164,8 @@ static Key keys[] = {
 	{ Mod1Mask,                     -1,   XK_slash,        spawn,         SHCMD("change-volume toggle") },
 	{ MODKEY,                       -1,   XK_slash,        spawn,         SHCMD("change-volume toggle") },
 	{ 0,                            -1,   XF86XK_AudioMute,spawn,         SHCMD("change-volume toggle") },
-
+	{ 0,                            -1,   XF86XK_MonBrightnessUp,spawn,   SHCMD("brighten up") },
+	{ 0,                            -1,   XF86XK_MonBrightnessDown,spawn, SHCMD("brighten down") },
 };
 
 /* button definitions */
