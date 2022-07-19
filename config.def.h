@@ -93,54 +93,56 @@ static const char *termcmd[]  = { TERMINAL, NULL };
 static const scratchpad keepassxc = {.class = "KeePassXC", .v = (char *[]){"keepassxc", NULL}};
 
 static Key keys[] = {
-	/* modifier         chain key                       function       argument */
+	/* modifier         chain key                       function        argument */
 	/* window management */
-	{ MODKEY,           -1,   XK_d,                     spawn,         {.v = dmenucmd } },
-	{ MODKEY,           -1,   XK_Return,                spawn,         {.v = termcmd } },
-	{ MODKEY,           -1,   XK_o,                     togglescratch, {.v = &keepassxc } },
-	{ MODKEY,           -1,   XK_h,                     setmfact,      {.f = -0.05} },
-	{ MODKEY,           -1,   XK_l,                     setmfact,      {.f = +0.05} },
-	{ MODKEY,           -1,   XK_space,                 zoom,          {0} },
-	{ MODKEY,           -1,   XK_Tab,                   view,          {0} },
-	{ MODKEY,           -1,   XK_q,                     killclient,    {0} },
-	{ MODKEY,           -1,   XK_f,                     togglefullscr, {0} },
-	{ MODKEY,           -1,   XK_m,                     focusmon,      {.i = +1 } },
-	{ MODKEY,           -1,   XK_n,                     tagmon,        {.i = +1 } },
-	{ MODKEY|ShiftMask, -1,   XK_q,                     quit,          {0} },
+	{ MODKEY,           -1,   XK_d,                     spawn,          {.v = dmenucmd } },
+	{ MODKEY,           -1,   XK_Return,                spawn,          {.v = termcmd } },
+	{ MODKEY,           -1,   XK_o,                     togglescratch,  {.v = &keepassxc } },
+	{ MODKEY|ShiftMask, -1,   XK_b,                     togglebar,      {0} },
+	{ MODKEY,           -1,   XK_h,                     setmfact,       {.f = -0.05} },
+	{ MODKEY,           -1,   XK_l,                     setmfact,       {.f = +0.05} },
+	{ MODKEY,           -1,   XK_space,                 zoom,           {0} },
+	{ MODKEY,           -1,   XK_Tab,                   view,           {0} },
+	{ MODKEY,           -1,   XK_q,                     killclient,     {0} },
+	{ MODKEY|ShiftMask, -1,   XK_space,                 togglefloating, {0} },
+	{ MODKEY,           -1,   XK_f,                     togglefullscr,  {0} },
+	{ MODKEY,           -1,   XK_m,                     focusmon,       {.i = +1 } },
+	{ MODKEY,           -1,   XK_n,                     tagmon,         {.i = +1 } },
+	{ MODKEY|ShiftMask, -1,   XK_q,                     quit,           {0} },
 
 	/* layouts */
-	{ MODKEY,           XK_t, XK_t,                     setlayout,     {.v = &layouts[0]} }, /* tile */
-	{ MODKEY,           XK_t, XK_f,                     setlayout,     {.v = &layouts[1]} }, /* floating */
-	{ MODKEY,           XK_t, XK_m,                     setlayout,     {.v = &layouts[2]} }, /* monocle */
-	{ MODKEY,           XK_t, XK_g,                     setlayout,     {.v = &layouts[3]} }, /* grid */
-	{ MODKEY,           XK_t, XK_c,                     setlayout,     {.v = &layouts[4]} }, /* col */
+	{ MODKEY,           XK_t, XK_t,                     setlayout,      {.v = &layouts[0]} }, /* tile */
+	{ MODKEY,           XK_t, XK_f,                     setlayout,      {.v = &layouts[1]} }, /* floating */
+	{ MODKEY,           XK_t, XK_m,                     setlayout,      {.v = &layouts[2]} }, /* monocle */
+	{ MODKEY,           XK_t, XK_g,                     setlayout,      {.v = &layouts[3]} }, /* grid */
+	{ MODKEY,           XK_t, XK_c,                     setlayout,      {.v = &layouts[4]} }, /* col */
 
 	/* shortcuts */
-	{ MODKEY,           -1,   XK_z,                     spawn,         SHCMD("lock-screen") },
-	{ MODKEY|ShiftMask, -1,   XK_z,                     spawn,         SHCMD("suspend-lock") },
-	{ MODKEY,           -1,   XK_e,                     spawn,         SHCMD("fix-stuff") },
-	{ MODKEY,           -1,   XK_w,                     spawn,         SHCMD("$BROWSER") },
-	{ MODKEY|ShiftMask, -1,   XK_w,                     spawn,         SHCMD(TERMINAL " -e nmtui") },
-	{ MODKEY,           -1,   XK_g,                     spawn,         SHCMD("ss -s") },
-	{ MODKEY|ShiftMask, -1,   XK_g,                     spawn,         SHCMD("ss") },
-	{ MODKEY,           -1,   XK_v,                     spawn,         SHCMD("diodon-in-the-corner") },
-	{ MODKEY,           -1,   XK_p,                     spawn,         SHCMD("media-command playpause") },
-	{ 0,                -1,   XF86XK_AudioPlay,         spawn,         SHCMD("media-command playpause") },
-	{ MODKEY,           -1,   XK_bracketleft,           spawn,         SHCMD("media-command prev") },
-	{ 0,                -1,   XF86XK_AudioPrev,         spawn,         SHCMD("media-command prev") },
-	{ MODKEY,           -1,   XK_bracketright,          spawn,         SHCMD("media-command next") },
-	{ 0,                -1,   XF86XK_AudioNext,         spawn,         SHCMD("media-command next") },
-	{ Mod1Mask,         -1,   XK_comma,                 spawn,         SHCMD("change-volume down") },
-	{ MODKEY,           -1,   XK_comma,                 spawn,         SHCMD("change-volume down") },
-	{ 0,                -1,   XF86XK_AudioLowerVolume,  spawn,         SHCMD("change-volume down") },
-	{ Mod1Mask,         -1,   XK_period,                spawn,         SHCMD("change-volume up") },
-	{ MODKEY,           -1,   XK_period,                spawn,         SHCMD("change-volume up") },
-	{ 0,                -1,   XF86XK_AudioRaiseVolume,  spawn,         SHCMD("change-volume up") },
-	{ Mod1Mask,         -1,   XK_slash,                 spawn,         SHCMD("change-volume toggle") },
-	{ MODKEY,           -1,   XK_slash,                 spawn,         SHCMD("change-volume toggle") },
-	{ 0,                -1,   XF86XK_AudioMute,         spawn,         SHCMD("change-volume toggle") },
-	{ 0,                -1,   XF86XK_MonBrightnessUp,   spawn,         SHCMD("brighten up") },
-	{ 0,                -1,   XF86XK_MonBrightnessDown, spawn,         SHCMD("brighten down") },
+	{ MODKEY,           -1,   XK_z,                     spawn,          SHCMD("lock-screen") },
+	{ MODKEY|ShiftMask, -1,   XK_z,                     spawn,          SHCMD("suspend-lock") },
+	{ MODKEY,           -1,   XK_e,                     spawn,          SHCMD("fix-stuff") },
+	{ MODKEY,           -1,   XK_w,                     spawn,          SHCMD("$BROWSER") },
+	{ MODKEY|ShiftMask, -1,   XK_w,                     spawn,          SHCMD(TERMINAL " -e nmtui") },
+	{ MODKEY,           -1,   XK_g,                     spawn,          SHCMD("ss -s") },
+	{ MODKEY|ShiftMask, -1,   XK_g,                     spawn,          SHCMD("ss") },
+	{ MODKEY,           -1,   XK_v,                     spawn,          SHCMD("diodon-in-the-corner") },
+	{ MODKEY,           -1,   XK_p,                     spawn,          SHCMD("media-command playpause") },
+	{ 0,                -1,   XF86XK_AudioPlay,         spawn,          SHCMD("media-command playpause") },
+	{ MODKEY,           -1,   XK_bracketleft,           spawn,          SHCMD("media-command prev") },
+	{ 0,                -1,   XF86XK_AudioPrev,         spawn,          SHCMD("media-command prev") },
+	{ MODKEY,           -1,   XK_bracketright,          spawn,          SHCMD("media-command next") },
+	{ 0,                -1,   XF86XK_AudioNext,         spawn,          SHCMD("media-command next") },
+	{ Mod1Mask,         -1,   XK_comma,                 spawn,          SHCMD("change-volume down") },
+	{ MODKEY,           -1,   XK_comma,                 spawn,          SHCMD("change-volume down") },
+	{ 0,                -1,   XF86XK_AudioLowerVolume,  spawn,          SHCMD("change-volume down") },
+	{ Mod1Mask,         -1,   XK_period,                spawn,          SHCMD("change-volume up") },
+	{ MODKEY,           -1,   XK_period,                spawn,          SHCMD("change-volume up") },
+	{ 0,                -1,   XF86XK_AudioRaiseVolume,  spawn,          SHCMD("change-volume up") },
+	{ Mod1Mask,         -1,   XK_slash,                 spawn,          SHCMD("change-volume toggle") },
+	{ MODKEY,           -1,   XK_slash,                 spawn,          SHCMD("change-volume toggle") },
+	{ 0,                -1,   XF86XK_AudioMute,         spawn,          SHCMD("change-volume toggle") },
+	{ 0,                -1,   XF86XK_MonBrightnessUp,   spawn,          SHCMD("brighten up") },
+	{ 0,                -1,   XF86XK_MonBrightnessDown, spawn,          SHCMD("brighten down") },
 
 	/* defines */
 	TAGKEYS(XK_1, 0)
