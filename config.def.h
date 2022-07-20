@@ -64,13 +64,13 @@ static const Layout layouts[] = {
 	{ MODKEY|ControlMask|ShiftMask, -1, KEY, toggletag,  {.ui = 1 << TAG} },
 
 #define STACKKEYS(MOD, CHAIN, ACTION) \
-	{ MOD, CHAIN, XK_j,     ACTION##stack, {.i = INC(+1) } }, \
-	{ MOD, CHAIN, XK_k,     ACTION##stack, {.i = INC(-1) } }, \
-	{ MOD, CHAIN, XK_grave, ACTION##stack, {.i = PREVSEL } }, \
-	{ MOD, CHAIN, XK_c,     ACTION##stack, {.i = 0 } }, \
-	{ MOD, CHAIN, XK_a,     ACTION##stack, {.i = 1 } }, \
-	{ MOD, CHAIN, XK_z,     ACTION##stack, {.i = 2 } }, \
-	{ MOD, CHAIN, XK_x,     ACTION##stack, {.i = -1 } },
+	{ MOD, CHAIN, XK_j,          ACTION##stack, {.i = INC(+1) } }, \
+	{ MOD, CHAIN, XK_k,          ACTION##stack, {.i = INC(-1) } }, \
+	{ MOD, CHAIN, XK_apostrophe, ACTION##stack, {.i = PREVSEL } }, \
+	{ MOD, CHAIN, XK_y,          ACTION##stack, {.i = 0 } }, \
+	{ MOD, CHAIN, XK_u,          ACTION##stack, {.i = 1 } }, \
+	{ MOD, CHAIN, XK_i,          ACTION##stack, {.i = 2 } }, \
+	{ MOD, CHAIN, XK_x,          ACTION##stack, {.i = -1 } },
 
 #define SPACEKEYS(CHAIN, ACTION) \
 	{ MODKEY, CHAIN, XK_a, ACTION, {.ui = 1 << 0} }, \
