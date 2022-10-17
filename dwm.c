@@ -342,13 +342,13 @@ applyrules(Client *c)
 			for (m = mons; m && (m->tagset[m->seltags] & c->tags) == 0; m = m->next);
 			if (m) {
 				c->mon = m;
-				if(c->isfloating){
-					c->x = c->mon->mx + (c->mon->mw - WIDTH(c)) / 2;
-					c->y = c->mon->my + (c->mon->mh - HEIGHT(c)) / 2;
-				}
 			}
 		}
 
+	}
+	if(c->isfloating){
+		c->x = c->mon->mx + (c->mon->mw - WIDTH(c)) / 2;
+		c->y = c->mon->my + (c->mon->mh - HEIGHT(c)) / 2;
 	}
 	if (ch.res_class)
 		XFree(ch.res_class);
@@ -1625,7 +1625,6 @@ sendmon(Client *c, Monitor *m)
 	detachstack(c);
 	c->mon = m;
 	c->tags = m->tagset[m->seltags]; /* assign tags of target monitor */
-	attachbottom(c);
 	attachstack(c);
 	focus(NULL);
 	arrange(NULL);
@@ -2070,15 +2069,20 @@ togglescratch(const Arg *arg)
 	char found = 0;
 	Monitor *m;
 	m = mons;
-	for (c = m->cl->clients; c; c = c->next){
-		const char *class;
-		XClassHint ch = { NULL, NULL };
-		XGetClassHint(dpy, c->win, &ch);
-		class = ch.res_class ? ch.res_class : broken;
-		found = (((char *)((scratchpad *)arg->v)->class != NULL) &&
-				strcmp(class,(char *)((scratchpad *)arg->v)->class) == 0) ||
-			(((char *)((scratchpad *)arg->v)->title != NULL) &&
-			 strcmp(c->name, (char *)((scratchpad *)arg->v)->title) == 0);
+	for(m = mons; m; m = m->next){
+		for (c = m->cl->clients; c; c = c->next){
+			const char *class;
+			XClassHint ch = { NULL, NULL };
+			XGetClassHint(dpy, c->win, &ch);
+			class = ch.res_class ? ch.res_class : broken;
+			found = (((char *)((scratchpad *)arg->v)->class != NULL) &&
+					strcmp(class,(char *)((scratchpad *)arg->v)->class) == 0) ||
+				(((char *)((scratchpad *)arg->v)->title != NULL) &&
+				 strcmp(c->name, (char *)((scratchpad *)arg->v)->title) == 0);
+			if(found){
+				break;
+			}
+		}
 		if(found){
 			m = c->mon;
 			break;
@@ -2094,9 +2098,11 @@ togglescratch(const Arg *arg)
 		}
 		focus(NULL);
 		arrange(selmon);
+		/*
 		attachclients(selmon);
 		arrange(selmon);
 		focus(NULL);
+		*/
 		if (ISVISIBLE(c, selmon)) {
 			restack(selmon);
 			focus(c);
