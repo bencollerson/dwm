@@ -507,10 +507,10 @@ attachstack(Client *c)
 void
 buttonpress(XEvent *e)
 {
-	unsigned int i, x, click;
+	unsigned int i, x, click, utags = 0;
 	Arg arg = {0};
 	Client *c;
-	Monitor *m;
+	Monitor *m, *tm;
 	XButtonPressedEvent *ev = &e->xbutton;
 
 	click = ClkRootWin;
@@ -525,9 +525,13 @@ buttonpress(XEvent *e)
 		unsigned int occ = 0;
 		for(c = m->cl->clients; c; c=c->next)
 			occ |= c->tags;
+		/* collect information about the tags in use */
+		for (tm = mons; tm; tm = tm->next)
+			if(tm != m)
+				utags |= tm->tagset[tm->seltags];
 		do {
 			/* Do not reserve space for vacant tags */
-			if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
+		        if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i) || (utags & 1 << i && !(m->tagset[m->seltags] & 1 << i)))
 				continue;
 			x += TEXTW(tags[i]);
 		} while (ev->x >= x && ++i < LENGTH(tags));
@@ -894,7 +898,7 @@ drawbar(Monitor *m)
 
 	for (i = 0; i < LENGTH(tags); i++) {
 		/* Do not draw vacant tags */
-		if(!(occ & 1 << i || m->tagset[m->seltags] & 1 << i) || (utags & 1 << i && !(m->tagset[m->seltags] & 1 << i)))
+		if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i) || (utags & 1 << i && !(m->tagset[m->seltags] & 1 << i)))
 			continue;
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? (urg & 1 << i ? SchemeSelWarn : SchemeSel) : (urg & 1 << i ? SchemeWarn : SchemeNorm)]);
@@ -1631,10 +1635,12 @@ sendmon(Client *c, Monitor *m)
 		return;
 	int hadfocus = (c == selmon->sel);
 	unfocus(c, 1);
+	detach(c);
 	detachstack(c);
-	arrange(c->mon);
+	/*arrange(c->mon);*/
 	c->mon = m;
 	c->tags = m->tagset[m->seltags]; /* assign tags of target monitor */
+	attach(c);
 	attachstack(c);
 	applyrules(c);
 	arrange(m);
@@ -1926,7 +1932,9 @@ tag(const Arg *arg)
 			}
 		/* workaround in case just one monitor is connected */
 
+		detach(selmon->sel);
 		selmon->sel->tags = arg->ui & TAGMASK;
+		attach(selmon->sel);
 		focus(NULL);
 		arrange(selmon);
 	}
