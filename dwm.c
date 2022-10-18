@@ -1636,6 +1636,7 @@ sendmon(Client *c, Monitor *m)
 	c->mon = m;
 	c->tags = m->tagset[m->seltags]; /* assign tags of target monitor */
 	attachstack(c);
+	applyrules(c);
 	arrange(m);
 	if (hadfocus) {
 		focus(c);
