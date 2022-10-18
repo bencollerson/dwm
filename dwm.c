@@ -852,11 +852,13 @@ drawbar(Monitor *m)
 	int boxs = drw->fonts->h / 9;
 	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, occ = 0, urg = 0;
+	unsigned int utags = 0;
 	char *ts = stext;
 	char *tp = stext;
 	int tx = 0;
 	char ctmp;
 	Client *c;
+	Monitor *tm;
 
 	if (!m->showbar)
 		return;
@@ -884,9 +886,15 @@ drawbar(Monitor *m)
 			urg |= c->tags;
 	}
 	x = 0;
+
+	/* collect information about the tags in use */
+	for (tm = mons; tm; tm = tm->next)
+		if(tm != m)
+			utags |= tm->tagset[tm->seltags];
+
 	for (i = 0; i < LENGTH(tags); i++) {
 		/* Do not draw vacant tags */
-		if(!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
+		if(!(occ & 1 << i || m->tagset[m->seltags] & 1 << i) || (utags & 1 << i && !(m->tagset[m->seltags] & 1 << i)))
 			continue;
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? (urg & 1 << i ? SchemeSelWarn : SchemeSel) : (urg & 1 << i ? SchemeWarn : SchemeNorm)]);
