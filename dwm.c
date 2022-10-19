@@ -1637,7 +1637,7 @@ sendmon(Client *c, Monitor *m)
 	unfocus(c, 1);
 	detach(c);
 	detachstack(c);
-	/*arrange(c->mon);*/
+	arrange(c->mon);
 	c->mon = m;
 	c->tags = m->tagset[m->seltags]; /* assign tags of target monitor */
 	attach(c);
@@ -1932,9 +1932,7 @@ tag(const Arg *arg)
 			}
 		/* workaround in case just one monitor is connected */
 
-		detach(selmon->sel);
 		selmon->sel->tags = arg->ui & TAGMASK;
-		attach(selmon->sel);
 		focus(NULL);
 		arrange(selmon);
 	}

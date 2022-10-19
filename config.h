@@ -75,9 +75,7 @@ static const Layout layouts[] = {
 
 #define TAGKEYS(KEY) \
 	{ MODKEY,           XK_r, KEY, view,       {.ui = 1 << (KEY - XK_a)} }, \
-	{ MODKEY|ShiftMask, XK_r, KEY, toggleview, {.ui = 1 << (KEY - XK_a)} }, \
 	{ MODKEY,           XK_e, KEY, tag,        {.ui = 1 << (KEY - XK_a)} }, \
-	{ MODKEY|ShiftMask, XK_e, KEY, toggletag,  {.ui = 1 << (KEY - XK_a)} }, \
 
 #define STACKKEYS(MOD, CHAIN, ACTION) \
 	{ MOD, CHAIN, XK_j,          ACTION##stack, {.i = INC(+1) } }, \
