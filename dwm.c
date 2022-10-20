@@ -164,7 +164,6 @@ typedef struct {
 	int isfloating;
 	int isterminal;
 	int noswallow;
-	int monitor;
 } Rule;
 
 struct Clientlist {
