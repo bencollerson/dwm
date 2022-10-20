@@ -44,7 +44,7 @@ static const Rule rules[] = {
  *        WM_CLASS(STRING) = instance, class
  *        WM_NAME(STRING) = title
 	   class          instance  title            tags mask       isfloating  isterminal  noswallow  */
-	{ "KeePassXC",    NULL,     NULL,            (1 << 31),      1,          0,          0 },
+	{ "KeePassXC",    NULL,     NULL,            0x80000000,     1,          0,          0 },
 	{ "qutebrowser",  NULL,     "YouTube",       1 << ('y'-'a'), 0,          0,          0 },
 	{ "st-256color",  NULL,     NULL,            0,              0,          1,          0 },
 	{ NULL,           NULL,     "Event Tester",  0,              0,          0,          1 },
