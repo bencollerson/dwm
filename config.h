@@ -34,9 +34,8 @@ static const char *colors[][2] = {
 
 /* tagging */
 static const char *tags[] = {
-	"a", "b", "c", "d", "e", "f", "g", "h", "i",
-	"j", "k", "l", "m", "n", "o", "p", "q", "r",
-	"s", "t", "u", "v", "w", "x", "y", "z"
+	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+	"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
 };
 
 static const Rule rules[] = {
@@ -46,7 +45,9 @@ static const Rule rules[] = {
 	   class          instance  title            tags mask       isfloating  isterminal  noswallow  */
 	{ "KeePassXC",    NULL,     NULL,            0x80000000,     1,          0,          0 },
 	{ "qutebrowser",  NULL,     "YouTube",       1 << ('y'-'a'), 0,          0,          0 },
+	{ "qutebrowser",  NULL,     "Slack",         1 << ('m'-'a'), 0,          0,          0 },
 	{ "st-256color",  NULL,     NULL,            0,              0,          1,          0 },
+	{ "st-256color",  NULL,     "neomutt",       1 << ('m'-'a'), 0,          1,          0 },
 	{ NULL,           NULL,     "Event Tester",  0,              0,          0,          1 },
 };
 
@@ -113,7 +114,6 @@ static Key keys[] = {
 	{ MODKEY,           -1,   XK_m,                     focusmon,       {.i = +1 } },
 	{ MODKEY,           -1,   XK_n,                     tagmon,         {.i = +1 } },
 	{ MODKEY|ShiftMask, -1,   XK_q,                     quit,           {0} },
-	{ MODKEY,           -1,   XK_0,                     view,           {.ui = ~0 } },
 
 	/* layouts */
 	{ MODKEY,           XK_t, XK_t,                     setlayout,      {.v = &layouts[LAYOUT_TILE]} },
