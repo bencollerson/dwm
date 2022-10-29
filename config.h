@@ -93,6 +93,7 @@ static const Layout layouts[] = {
 #define SPAWN(...) {.v = (const char*[]){ __VA_ARGS__, NULL } }
 
 /* commands */
+static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-b", "-i", "-p", "$", NULL };
 static const char *termcmd[]  = { TERMINAL, NULL };
 static const scratchpad keepassxc = {.class = "KeePassXC", .v = (char *[]){"keepassxc", NULL}};
