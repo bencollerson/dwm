@@ -84,11 +84,6 @@ static const Layout layouts[] = {
 #define STACKKEYS(MOD, CHAIN, ACTION) \
 	{ MOD, CHAIN, XK_j,          ACTION##stack, {.i = INC(+1) } }, \
 	{ MOD, CHAIN, XK_k,          ACTION##stack, {.i = INC(-1) } }, \
-	{ MOD, CHAIN, XK_apostrophe, ACTION##stack, {.i = PREVSEL } }, \
-	{ MOD, CHAIN, XK_y,          ACTION##stack, {.i = 0 } }, \
-	{ MOD, CHAIN, XK_u,          ACTION##stack, {.i = 1 } }, \
-	{ MOD, CHAIN, XK_i,          ACTION##stack, {.i = 2 } }, \
-	{ MOD, CHAIN, XK_x,          ACTION##stack, {.i = -1 } },
 
 #define SPAWN(...) {.v = (const char*[]){ __VA_ARGS__, NULL } }
 
@@ -131,6 +126,8 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask, -1,   XK_w,                     spawn,          SPAWN(TERMINAL, "-e", "nmtui") },
 	{ MODKEY,           -1,   XK_g,                     spawn,          SPAWN("ss", "-s") },
 	{ MODKEY|ShiftMask, -1,   XK_g,                     spawn,          SPAWN("ss") },
+	{ MODKEY,           -1,   XK_y,                     spawn,          SPAWN("bookmarker", "yank") },
+	{ MODKEY,           -1,   XK_u,                     spawn,          SPAWN("bookmarker", "put") },
 	{ MODKEY,           -1,   XK_v,                     spawn,          SPAWN("clipboard-control") },
 	{ MODKEY,           -1,   XK_p,                     spawn,          SPAWN("media-command", "playpause") },
 	{ 0,                -1,   XF86XK_AudioPlay,         spawn,          SPAWN("media-command", "playpause") },
