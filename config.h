@@ -44,11 +44,11 @@ static const Rule rules[] = {
  *        WM_NAME(STRING) = title
 	   class          instance  title            tags mask       isfloating  isterminal  noswallow  */
 	{ "KeePassXC",    NULL,     NULL,            0x80000000,     1,          0,          0 },
-	{ "qutebrowser",  NULL,     "YouTube",       1 << ('y'-'a'), 0,          0,          0 },
-	{ "qutebrowser",  NULL,     "Slack",         1 << ('m'-'a'), 0,          0,          0 },
 	{ "st-256color",  NULL,     NULL,            0,              0,          1,          0 },
-	{ "st-256color",  NULL,     "neomutt",       1 << ('m'-'a'), 0,          1,          0 },
 	{ NULL,           NULL,     "Event Tester",  0,              0,          0,          1 },
+/*	{ "qutebrowser",  NULL,     "YouTube",       1 << ('y'-'a'), 0,          0,          0 },
+	{ "qutebrowser",  NULL,     "Slack",         1 << ('m'-'a'), 0,          0,          0 },
+	{ "st-256color",  NULL,     "neomutt",       1 << ('m'-'a'), 0,          1,          0 },*/
 };
 
 /* layout(s) */
