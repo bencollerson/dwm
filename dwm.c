@@ -2245,7 +2245,7 @@ togglescratch(const Arg *arg)
 			c->tags = selmon->tagset[selmon->seltags];
 			applyrules(c);
 		}else{
-			c->tags = ISVISIBLE(c, selmon) ? 1 << 31 : selmon->tagset[selmon->seltags];
+			c->tags = ISVISIBLE(c, selmon) ? SCRATCHTAG : selmon->tagset[selmon->seltags];
 		}
 		focus(NULL);
 		arrange(selmon);
